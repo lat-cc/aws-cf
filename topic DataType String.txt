@@ -1,0 +1,14 @@
+{"topic":{"DataType":"String","StringValue": "${request.header.x-topic}", "hmac": {"DataType":"String", "StringValue":"${request.header.x-hmac}"}}}
+
+aws ecs create-service \
+  --cluster LKS-TEST-ecs \
+  --service-name LKS-TEST-Catalog-gbd \
+  --task-definition arn:aws:ecs:us-east-1:440941313939:task-definition/LKS-TEST-Catalog-task:6 \
+  --launch-type EC2 \
+  --scheduling-strategy REPLICA \
+  --deployment-controller type=CODE_DEPLOY \
+  --deployment-configuration "maximumPercent=200,minimumHealthyPercent=100" \
+  --desired-count 1 \
+  --load-balancers targetGroupArn=arn:aws:elasticloadbalancing:us-east-1:440941313939:targetgroup/LKS-TEST-Catalog-ASG-tg/08b03fdb4a3f4abf,containerName=lks-test-catalog,containerPort=8000 \
+
+
