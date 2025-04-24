@@ -1,307 +1,306 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: 'AWS Cloudformation template for IOT Networking, copied from AWS Official Wordpress Cloudformation Template.'
+Description: "AWS Cloudformation template for IOT Networking, copied from AWS Official Wordpress Cloudformation Template."
 
 Resources:
-  MainVPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 172.20.0.0/16
-      EnableDnsHostnames: true
-      EnableDnsSupport: true
-      Tags: 
-      - Key: Name 
-        Value: lksvpc
-      - Key : Type
-        Value : LKS
-      - Key : SubType
-        Value: Modul2
+    MainVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 172.20.0.0/16
+            EnableDnsHostnames: true
+            EnableDnsSupport: true
+            Tags:
+                - Key: Name
+                  Value: lksvpc
+                - Key: Type
+                  Value: LKS
+                - Key: SubType
+                  Value: Modul2
 
-  MainIGW:
-    DependsOn: MainVPC
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-      - Key: Name
-        Value: lksigw
+    MainIGW:
+        DependsOn: MainVPC
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: lksigw
 
-  AttachIGW:
-    DependsOn: MainIGW
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref MainVPC
-      InternetGatewayId: !Ref MainIGW
+    AttachIGW:
+        DependsOn: MainIGW
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref MainVPC
+            InternetGatewayId: !Ref MainIGW
 
-  PublicSubnet:
-    Type: AWS::EC2::Subnet
-    Properties:
-      AvailabilityZone: us-east-1a
-      CidrBlock: 172.20.0.0/25
-      VpcId: !Ref MainVPC
-      Tags:
-        - Key: Name
-          Value: lks-public-1a
-        - Key : Type
-          Value : LKS
-        - Key : SubType
-          Value: Modul2
+    PublicSubnet:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone: us-east-1a
+            CidrBlock: 172.20.0.0/25
+            VpcId: !Ref MainVPC
+            Tags:
+                - Key: Name
+                  Value: lks-public-1a
+                - Key: Type
+                  Value: LKS
+                - Key: SubType
+                  Value: Modul2
 
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      AvailabilityZone: us-east-1b
-      CidrBlock: 172.20.0.128/25
-      VpcId: !Ref MainVPC
-      Tags:
-        - Key: Name
-          Value: lks-public-1b
-        - Key : Type
-          Value : LKS
-        - Key : SubType
-          Value: Modul2
+    PublicSubnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone: us-east-1b
+            CidrBlock: 172.20.0.128/25
+            VpcId: !Ref MainVPC
+            Tags:
+                - Key: Name
+                  Value: lks-public-1b
+                - Key: Type
+                  Value: LKS
+                - Key: SubType
+                  Value: Modul2
 
-  PrivateSubnet:
-    Type: AWS::EC2::Subnet
-    Properties:
-      AvailabilityZone: us-east-1a
-      CidrBlock: 172.20.1.0/26
-      VpcId: !Ref MainVPC
-      Tags:
-      - Key: Name
-        Value: lks-private-1a
-      - Key : Type
-        Value : LKS
-      - Key : SubType
-        Value: Modul2
+    PrivateSubnet:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone: us-east-1a
+            CidrBlock: 172.20.1.0/26
+            VpcId: !Ref MainVPC
+            Tags:
+                - Key: Name
+                  Value: lks-private-1a
+                - Key: Type
+                  Value: LKS
+                - Key: SubType
+                  Value: Modul2
 
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      AvailabilityZone: us-east-1b
-      CidrBlock: 172.20.1.64/26
-      VpcId: !Ref MainVPC
-      Tags:
-      - Key: Name
-        Value: lks-private-1b
-      - Key : Type
-        Value : LKS
-      - Key : SubType
-        Value: Modul2
+    PrivateSubnet1:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone: us-east-1b
+            CidrBlock: 172.20.1.64/26
+            VpcId: !Ref MainVPC
+            Tags:
+                - Key: Name
+                  Value: lks-private-1b
+                - Key: Type
+                  Value: LKS
+                - Key: SubType
+                  Value: Modul2
 
-  MainNGWEIP:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
+    MainNGWEIP:
+        Type: AWS::EC2::EIP
+        Properties:
+            Domain: vpc
 
-  MainNGW:
-    DependsOn: MainNGWEIP
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt MainNGWEIP.AllocationId
-      SubnetId: !Ref PublicSubnet
-      Tags:
-      - Key: Name
-        Value: natgw
+    MainNGW:
+        DependsOn: MainNGWEIP
+        Type: AWS::EC2::NatGateway
+        Properties:
+            AllocationId: !GetAtt MainNGWEIP.AllocationId
+            SubnetId: !Ref PublicSubnet
+            Tags:
+                - Key: Name
+                  Value: natgw
 
-  MainPrivateRouteTable:
-    DependsOn: MainNGW
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref MainVPC
-      Tags:
-      - Key: Name
-        Value: lksprivate
+    MainPrivateRouteTable:
+        DependsOn: MainNGW
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref MainVPC
+            Tags:
+                - Key: Name
+                  Value: lksprivate
 
-  MainPublicRouteTable:
-    DependsOn: AttachIGW
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref MainVPC
-      Tags:
-      - Key: Name
-        Value: lkspublic
+    MainPublicRouteTable:
+        DependsOn: AttachIGW
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref MainVPC
+            Tags:
+                - Key: Name
+                  Value: lkspublic
 
-  PublicIGWRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref MainPublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref MainIGW
+    PublicIGWRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref MainPublicRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref MainIGW
 
-  PrivateNGWRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref MainPrivateRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref MainNGW
+    PrivateNGWRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref MainPrivateRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            NatGatewayId: !Ref MainNGW
 
-  PublicSubnetRouteAsc:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PublicSubnet
-      RouteTableId: !Ref MainPublicRouteTable
-    
-  PublicSubnet1RouteAsc:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PublicSubnet1
-      RouteTableId: !Ref MainPublicRouteTable
+    PublicSubnetRouteAsc:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref PublicSubnet
+            RouteTableId: !Ref MainPublicRouteTable
 
-  PrivateSubnetRouteAsc:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PrivateSubnet
-      RouteTableId: !Ref MainPrivateRouteTable
-    
-  PrivateSubnet1RouteAsc:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PrivateSubnet1
-      RouteTableId: !Ref MainPrivateRouteTable
+    PublicSubnet1RouteAsc:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref PublicSubnet1
+            RouteTableId: !Ref MainPublicRouteTable
 
-  LoadBalancerSecurity:
-    DependsOn: MainVPC
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable HTTP and HTTPS access via port 80 and 443 to the load balancer
-      VpcId: !Ref MainVPC
-      SecurityGroupIngress:
-      - CidrIp: 0.0.0.0/0
-        FromPort: 80
-        IpProtocol: tcp
-        ToPort: 80
-      - CidrIp: 0.0.0.0/0
-        FromPort: 443
-        IpProtocol: tcp
-        ToPort: 443
-      Tags:
-      - Key: Name
-        Value: SG-LB
-  
-  InstanceSecurity:
-    DependsOn: MainVPC
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable access via port 3000 from Instance to the Internal Network
-      VpcId: !Ref MainVPC
-      SecurityGroupIngress:
-      - CidrIp: 175.20.0.0/16
-        FromPort: 3000
-        IpProtocol: tcp
-        ToPort: 3000
-      Tags:
-      - Key: Name
-        Value: SG-Apps
-  
-  WebServer:
-    DependsOn: PrivateSubnetRouteAsc
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-01eccbf80522b562b      
-      InstanceType: t3.small
-      NetworkInterfaces:
-        - DeviceIndex: "0"
-          GroupSet:
-            - !Ref InstanceSecurity
-          SubnetId: !Ref PrivateSubnet
-      UserData:
-        Fn::Base64:  !Sub |
-          #!/bin/bash -xe
-          yum update -y
-          curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash - 
-          sudo yum install -y nodejs
-          yum install git -y
-          git clone https://github.com/handipradana/chartiot2023
-          cd chartiot2023
-          npm install
-          cat <<EOF>> .env 
-          AWS_ACCESS_KEY=AKIAVK7O2PPCXEMCRDXV
-          AWS_SECRET_ACCESS_KEY=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
-          EOF
-          npm run start-prod
-      Tags:
-        - Key: Name
-          Value: lksapp1a
-         
-  WebServer1:
-    DependsOn: PrivateSubnet1RouteAsc
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-01eccbf80522b562b  
-      InstanceType: t3.small
-      NetworkInterfaces:
-        - DeviceIndex: "0"
-          GroupSet:
-            - !Ref InstanceSecurity
-          SubnetId: !Ref PrivateSubnet1
-      UserData:
-        Fn::Base64:  
-          !Sub | 
-          #!/bin/bash -xe
-          yum update -y
-          curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash - 
-          sudo yum install -y nodejs
-          yum install git -y
-          git clone https://github.com/handipradana/chartiot2023
-          cd chartiot2023
-          npm install
-          cat <<EOF>> .env 
-          AWS_ACCESS_KEY=AKIAVK7O2PPCXEMCRDXV
-          AWS_SECRET_ACCESS_KEY=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
-          EOF
-          npm run start-prod
-      Tags:
-        - Key: Name
-          Value: lksapps1b
-  
-  ElbTargetGroup:
-    DependsOn: WebServer
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      VpcId: !Ref MainVPC
-      HealthCheckEnabled: true
-      HealthCheckIntervalSeconds: 120
-      HealthCheckPort: "3000"
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 60
-      HealthyThresholdCount: 3
-      Name: lks-tg
-      Port: 3000
-      Protocol: HTTP
-      Targets:
-        - Id: !Ref WebServer
-        - Id: !Ref WebServer1
-      TargetType: instance
+    PrivateSubnetRouteAsc:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref PrivateSubnet
+            RouteTableId: !Ref MainPrivateRouteTable
 
-  ElbMain:
-    DependsOn: MainPublicRouteTable
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties: 
-      Name: lks-public-lb
-      Scheme: internet-facing
-      SecurityGroups:
-        - !Ref LoadBalancerSecurity
-      Subnets:
-        - !Ref PublicSubnet
-        - !Ref PublicSubnet1
-      Type: application
-      IpAddressType: ipv4
+    PrivateSubnet1RouteAsc:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref PrivateSubnet1
+            RouteTableId: !Ref MainPrivateRouteTable
 
-  InstanceElbListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref ElbMain
-      Port: 80
-      Protocol: HTTP
-      DefaultActions:
-      - Type: forward
-        TargetGroupArn: !Ref ElbTargetGroup
+    LoadBalancerSecurity:
+        DependsOn: MainVPC
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable HTTP and HTTPS access via port 80 and 443 to the load balancer
+            VpcId: !Ref MainVPC
+            SecurityGroupIngress:
+                - CidrIp: 0.0.0.0/0
+                  FromPort: 80
+                  IpProtocol: tcp
+                  ToPort: 80
+                - CidrIp: 0.0.0.0/0
+                  FromPort: 443
+                  IpProtocol: tcp
+                  ToPort: 443
+            Tags:
+                - Key: Name
+                  Value: SG-LB
+
+    InstanceSecurity:
+        DependsOn: MainVPC
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable access via port 3000 from Instance to the Internal Network
+            VpcId: !Ref MainVPC
+            SecurityGroupIngress:
+                - CidrIp: 175.20.0.0/16
+                  FromPort: 3000
+                  IpProtocol: tcp
+                  ToPort: 3000
+            Tags:
+                - Key: Name
+                  Value: SG-Apps
+
+    WebServer:
+        DependsOn: PrivateSubnetRouteAsc
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: ami-01eccbf80522b562b
+            InstanceType: t3.small
+            NetworkInterfaces:
+                - DeviceIndex: "0"
+                  GroupSet:
+                      - !Ref InstanceSecurity
+                  SubnetId: !Ref PrivateSubnet
+            UserData:
+                Fn::Base64: !Sub |
+                    #!/bin/bash -xe
+                    yum update -y
+                    curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash - 
+                    sudo yum install -y nodejs
+                    yum install git -y
+                    git clone https://github.com/handipradana/chartiot2023
+                    cd chartiot2023
+                    npm install
+                    cat <<EOF>> .env 
+                    AWS_ACCESS_KEY=AKIAVK7O2PPCXEMCRDXV
+                    AWS_SECRET_ACCESS_KEY=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
+                    EOF
+                    npm run start-prod
+            Tags:
+                - Key: Name
+                  Value: lksapp1a
+
+    WebServer1:
+        DependsOn: PrivateSubnet1RouteAsc
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: ami-01eccbf80522b562b
+            InstanceType: t3.small
+            NetworkInterfaces:
+                - DeviceIndex: "0"
+                  GroupSet:
+                      - !Ref InstanceSecurity
+                  SubnetId: !Ref PrivateSubnet1
+            UserData:
+                Fn::Base64: !Sub |
+                    #!/bin/bash -xe
+                    yum update -y
+                    curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash - 
+                    sudo yum install -y nodejs
+                    yum install git -y
+                    git clone https://github.com/handipradana/chartiot2023
+                    cd chartiot2023
+                    npm install
+                    cat <<EOF>> .env 
+                    AWS_ACCESS_KEY=AKIAVK7O2PPCXEMCRDXV
+                    AWS_SECRET_ACCESS_KEY=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
+                    EOF
+                    npm run start-prod
+            Tags:
+                - Key: Name
+                  Value: lksapps1b
+
+    ElbTargetGroup:
+        DependsOn: WebServer
+        Type: AWS::ElasticLoadBalancingV2::TargetGroup
+        Properties:
+            VpcId: !Ref MainVPC
+            HealthCheckEnabled: true
+            HealthCheckIntervalSeconds: 120
+            HealthCheckPort: "3000"
+            HealthCheckProtocol: HTTP
+            HealthCheckTimeoutSeconds: 60
+            HealthyThresholdCount: 3
+            Name: lks-tg
+            Port: 3000
+            Protocol: HTTP
+            Targets:
+                - Id: !Ref WebServer
+                - Id: !Ref WebServer1
+            TargetType: instance
+
+    ElbMain:
+        DependsOn: MainPublicRouteTable
+        Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+        Properties:
+            Name: lks-public-lb
+            Scheme: internet-facing
+            SecurityGroups:
+                - !Ref LoadBalancerSecurity
+            Subnets:
+                - !Ref PublicSubnet
+                - !Ref PublicSubnet1
+            Type: application
+            IpAddressType: ipv4
+
+    InstanceElbListener:
+        Type: AWS::ElasticLoadBalancingV2::Listener
+        Properties:
+            LoadBalancerArn: !Ref ElbMain
+            Port: 80
+            Protocol: HTTP
+            DefaultActions:
+                - Type: forward
+                  TargetGroupArn: !Ref ElbTargetGroup
 
 Outputs:
-  vpcCreation: 
-    Description: Creation of lksvpc
-    Value: !GetAtt MainVPC.VpcId
+    vpcCreation:
+        Description: Creation of lksvpc
+        Value: !GetAtt MainVPC.VpcId
 
-  ELBCreation:
-    Description: Load Balancer DNS
-    Value: !GetAtt ElbMain.DNSName
+    ELBCreation:
+        Description: Load Balancer DNS
+        Value: !GetAtt ElbMain.DNSName
