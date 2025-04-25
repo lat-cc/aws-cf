@@ -198,6 +198,7 @@ Resources:
         Type: AWS::EC2::Instance
         Properties:
             ImageId: ami-01eccbf80522b562b
+            IamInstanceProfile: "ecsInstanceRole"
             InstanceType: t3.small
             NetworkInterfaces:
                 - DeviceIndex: "0"
@@ -208,17 +209,12 @@ Resources:
                 Fn::Base64: !Sub |
                     #!/bin/bash -xe
                     yum update -y
-                    curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash - 
-                    sudo yum install -y nodejs
-                    yum install git -y
-                    git clone https://github.com/handipradana/chartiot2023
-                    cd chartiot2023
-                    npm install
-                    cat <<EOF>> .env 
-                    AWS_ACCESS_KEY=AKIAVK7O2PPCXEMCRDXV
-                    AWS_SECRET_ACCESS_KEY=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
-                    EOF
-                    npm run start-prod
+                    sudo yum install -y docker
+                    sudo systemctl start docker
+                    sudo systemctl enable docker
+                    sudo usermod -aG docker ec2-user
+                    docker pull 284845684968.dkr.ecr.us-east-1.amazonaws.com/test-api:latest
+                    docker run -d -p 3000:3000 --name test-api 284845684968.dkr.ecr.us-east-1.amazonaws.com/test-api:latest
             Tags:
                 - Key: Name
                   Value: lksapp1a
@@ -229,6 +225,7 @@ Resources:
         Properties:
             ImageId: ami-01eccbf80522b562b
             InstanceType: t3.small
+            IamInstanceProfile: "ecsInstanceRole"
             NetworkInterfaces:
                 - DeviceIndex: "0"
                   GroupSet:
@@ -238,17 +235,13 @@ Resources:
                 Fn::Base64: !Sub |
                     #!/bin/bash -xe
                     yum update -y
-                    curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo bash - 
-                    sudo yum install -y nodejs
-                    yum install git -y
-                    git clone https://github.com/handipradana/chartiot2023
-                    cd chartiot2023
-                    npm install
-                    cat <<EOF>> .env 
-                    AWS_ACCESS_KEY=AKIAVK7O2PPCXEMCRDXV
-                    AWS_SECRET_ACCESS_KEY=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
-                    EOF
-                    npm run start-prod
+                    sudo yum install -y docker
+                    sudo systemctl start docker
+                    sudo systemctl enable docker
+                    sudo usermod -aG docker ec2-user
+                    sudo mkdir -p /home/ec2-user/.aws
+                    docker pull 284845684968.dkr.ecr.us-east-1.amazonaws.com/test-api:latest
+                    docker run -d -p 3000:3000 --name test-api 284845684968.dkr.ecr.us-east-1.amazonaws.com/test-api:latest
             Tags:
                 - Key: Name
                   Value: lksapps1b

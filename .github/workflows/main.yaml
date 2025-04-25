@@ -1,0 +1,18 @@
+# Do Something here
+# This is a placeholder for the main workflow file.
+name: Main Workflow
+on:
+    push:
+        branches:
+            - "main"
+
+jobs:
+    start:
+        name: Hello World
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Hello World
+              run: echo "Hello, World!"
