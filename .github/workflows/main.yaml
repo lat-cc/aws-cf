@@ -1,18 +1,38 @@
-# Do Something here
-# This is a placeholder for the main workflow file.
-name: Main Workflow
+name: Example Deploy Application into Docker Swarm
 on:
     push:
         branches:
             - "main"
 
+permissions:
+    id-token: write
+    contents: read
 jobs:
-    start:
-        name: Hello World
+    deploy:
+        name: Example Deploy Terraform to AWS
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v3
 
-            - name: Hello World
-              run: echo "Hello, World!"
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+                  aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+                  aws-region: us-east-1
+
+            - name: Terraform setup
+              uses: hashicorp/setup-terraform@v3
+
+            - name: Terraform Init
+              run: |
+                  terraform init
+
+            - name: Terraform Apply
+              run: |
+                  terraform apply -auto-approve
+
+            - name: End Deploy
+              run: echo "Deploy Success"
